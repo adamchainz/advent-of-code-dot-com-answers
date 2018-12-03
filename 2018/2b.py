@@ -4,25 +4,19 @@ def main():
         box_ids = [x.strip() for x in fp.readlines()]
 
     sorted_box_ids = sorted(box_ids)
-    sorted_reverse_box_ids = sorted([''.join(reversed(b)) for b in box_ids])
+    reverse_sorted_box_ids = sorted(box_ids, key=reverse_string)
 
-    searches = [
-        (sorted_box_ids, False),
-        (sorted_reverse_box_ids, True),
-    ]
+    for search_box_ids in (sorted_box_ids, reverse_sorted_box_ids):
+        for previous_box_id, box_id in zip(search_box_ids, search_box_ids[1:]):
+            diff_count = sum((a != b for a, b in zip(previous_box_id, box_id)))
+            if diff_count == 1:
+                answer = ''.join((a for a, b in zip(previous_box_id, box_id) if a == b))
+                print(answer)
+                return
 
-    for search_box_ids, reverse_answer in searches:
-        previous = None
-        for box_id in search_box_ids:
-            if previous is not None:
-                diff_count = sum([a != b for a, b in zip(previous, box_id)])
-                if diff_count == 1:
-                    answer = ''.join([a for a, b in zip(previous, box_id) if a == b])
-                    if reverse_answer:
-                        answer = ''.join(reversed(answer))
-                    print(answer)
-                    return
-            previous = box_id
+
+def reverse_string(string):
+        return ''.join(reversed(string))
 
 
 if __name__ == '__main__':
